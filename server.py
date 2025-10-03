@@ -23,6 +23,10 @@ output_path = '/home/onaquest/server-output'
 recent_image_path = max(os.listdir(f'{output_path}/images/'))
 print(f'recent_image_path: {recent_image_path}')
 
+def read_pass(password_path): 
+    with open(password_path) as f:
+        return f.read()
+
 def capture_data():
     while True:
         print('logginnggg')
@@ -63,9 +67,9 @@ def get_root():
     return get_file('index.html')
 
 # latest image captured
-@app.route('/api/image/<string:password>')
-def get_latest_image(password):
-    if(password == 'mushmushmush123'):
+@app.route('/api/image/<string:input_password>')
+def get_latest_image(input_password):
+    if(input_password == password):
         recent_image_path = max(os.listdir(f'{output_path}/images/'))
         return send_from_directory(f'{output_path}/images', recent_image_path)
 
@@ -76,6 +80,7 @@ def get_latest_env():
     with open(f'{output_path}/environment_log.txt') as f:
         return f.read().split('\n')[-1]
 
+password = read_pass('password.txt')
 if __name__ == '__main__':
     print('starting...')
     threading.Thread(target=capture_data, daemon=True).start()
