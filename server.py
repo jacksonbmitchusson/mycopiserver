@@ -18,7 +18,9 @@ cam = VideoCapture(0)
 # seconds
 delay = 90
 
-recent_image_path = max(os.listdir('/home/onaquest/server-output/images/'))
+output_path = '/home/onaquest/server-output'
+
+recent_image_path = max(os.listdir(f'{output_path}/images/'))
 print(f'recent_image_path: {recent_image_path}')
 
 def capture_data():
@@ -36,13 +38,13 @@ def capture_temphumid(timestamp):
     p = data.pressure
     record_str = f'{timestamp} - {t:05.2f}°F {h:05.2f}% {p:05.2f} hPa'
 
-    with open('/home/onaquest/server-output/environment_log.txt', 'a') as log:
+    with open(f'{output_path}/environment_log.txt', 'a') as log:
         log.write('\n' + record_str)
 
 def capture_image(timestamp):
     ret, frame = cam.read()
     if ret:
-        path = f'/home/onaquest/server-output/images/{timestamp}.png'
+        path = f'{output_path}/images/{timestamp}.png'
         recent_image_path = path
         imwrite(path, frame)
 
@@ -64,14 +66,14 @@ def get_root():
 @app.route('/api/image/<string:password>')
 def get_latest_image(password):
     if(password == 'mushmushmush123'):
-        recent_image_path = max(os.listdir('/home/onaquest/server-output/images/'))
-        return send_from_directory('/home/onaquest/server-output/images', recent_image_path)
+        recent_image_path = max(os.listdir(f'{output_path}/images/'))
+        return send_from_directory(f'{output_path}/images', recent_image_path)
 
 # latest temp/humid reading
 @app.route('/api/env/')
 def get_latest_env():
     last_n = []
-    with open('/home/onaquest/server-output/environment_log.txt') as f:
+    with open(f'{output_path}/environment_log.txt') as f:
         return f.read().split('\n')[-1]
 
 if __name__ == '__main__':
