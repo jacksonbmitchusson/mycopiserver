@@ -16,7 +16,7 @@ calib_params = bme280.load_calibration_params(bus, address=addr)
 cam = VideoCapture(0)
 
 # seconds
-delay = 90
+delay = 60
 
 output_path = '/home/onaquest/server-output'
 
