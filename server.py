@@ -49,7 +49,6 @@ def capture_image(timestamp):
     ret, frame = cam.read()
     if ret:
         path = f'{output_path}/images/{timestamp}.png'
-        recent_image_path = path
         imwrite(path, frame)
 
 @app.route('/<string:site_file>')
@@ -72,6 +71,9 @@ def get_latest_image(input_password):
     if(input_password == password):
         recent_image_path = max(os.listdir(f'{output_path}/images/'))
         return send_from_directory(f'{output_path}/images', recent_image_path)
+    else:
+        return send_from_directory('./', 'wrong.png')
+
 
 # latest temp/humid reading
 @app.route('/api/env/')
