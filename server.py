@@ -13,7 +13,7 @@ addr = 0x77
 bus = smbus2.SMBus(1)
 calib_params = bme280.load_calibration_params(bus, address=addr)
 
-cam = [VideoCapture(0), VideoCapture(1)] 
+cam = [VideoCapture(0), VideoCapture(2)]
 
 # seconds
 delay = 60
@@ -31,8 +31,10 @@ def capture_data():
         print('logginnggg')
         timestamp = datetime.now(timezone('America/Chicago')).strftime('%m-%d_%H-%M')
         capture_temphumid(timestamp)
-        capture_image(timestamp)
-        time.sleep(delay)
+        capture_image(timestamp, 0)
+        time.sleep(delay/2)
+        capture_image(timestamp, 1)
+        time.sleep(delay/2)
 
 def capture_temphumid(timestamp):
     data = bme280.sample(bus, addr)
