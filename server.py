@@ -4,8 +4,8 @@ from cv2 import VideoCapture, imwrite
 from pytz import timezone
 import threading, time
 import os
-import smbus2
-import bme280
+import smbus2 # type: ignore
+import bme280 # type: ignore
 
 app = Flask(__name__)
 
@@ -13,15 +13,14 @@ addr = 0x77
 bus = smbus2.SMBus(1)
 calib_params = bme280.load_calibration_params(bus, address=addr)
 
-cam = VideoCapture(0)
+cam = [VideoCapture(0), VideoCapture(1)] 
 
 # seconds
 delay = 60
 
 output_path = '/home/onaquest/server-output'
 
-recent_image_path = max(os.listdir(f'{output_path}/images/'))
-print(f'recent_image_path: {recent_image_path}')
+recent_image_paths = [max(os.listdir(f'{output_path}/images{i}/')) for i in range(2)]
 
 def read_pass(password_path): 
     with open(password_path) as f:
@@ -45,10 +44,10 @@ def capture_temphumid(timestamp):
     with open(f'{output_path}/environment_log.txt', 'a') as log:
         log.write('\n' + record_str)
 
-def capture_image(timestamp):
-    ret, frame = cam.read()
+def capture_image(timestamp, id):
+    ret, frame = cam[id].read()
     if ret:
-        path = f'{output_path}/images/{timestamp}.png'
+        path = f'{output_path}/images{id}/{timestamp}.png'
         imwrite(path, frame)
 
 @app.route('/<string:site_file>')
@@ -66,13 +65,13 @@ def get_root():
     return get_file('index.html')
 
 # latest image captured
-@app.route('/api/image/<string:input_password>')
-def get_latest_image(input_password):
+@app.route('/api/image/<string:input_password>/<int:id>')
+def get_latest_image(input_password, id):
     if(input_password == password):
-        recent_image_path = max(os.listdir(f'{output_path}/images/'))
-        return send_from_directory(f'{output_path}/images', recent_image_path)
+        recent_image_paths[id] = max(os.listdir(f'{output_path}/images{id}/'))
+        return send_from_directory(f'{output_path}/images{id}', recent_image_paths[id])
     else:
-        return send_from_directory('./', 'wrong.png')
+        return send_from_directory('./', f'wrong{id}.png')
 
 
 # latest temp/humid reading
