@@ -1,7 +1,7 @@
 let temp = document.getElementById("temp");
 let humid = document.getElementById("humid");
-let image0 = document.getElementById("image");
-let image1 = document.getElementById("image");
+let image0 = document.getElementById("image0");
+let image1 = document.getElementById("image1");
 let textbox = document.getElementById("textbox");
 let button = document.getElementById("button");
 
