@@ -13,7 +13,7 @@ addr = 0x77
 bus = smbus2.SMBus(1)
 calib_params = bme280.load_calibration_params(bus, address=addr)
 
-cam = [VideoCapture(0), VideoCapture(2)]
+cam = [VideoCapture(0), VideoCapture(1)]
 
 # seconds
 delay = 300
