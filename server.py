@@ -13,10 +13,12 @@ addr = 0x77
 bus = smbus2.SMBus(1)
 calib_params = bme280.load_calibration_params(bus, address=addr)
 
-cam = [VideoCapture(0), VideoCapture(2)]
+cam1 = VideoCapture(2)
+cam0 = VideoCapture(0)
+cam = [cam1, cam0]
 
 # seconds
-delay = 120
+delay = 60
 
 output_path = '/home/onaquest/server-output'
 
